@@ -1,0 +1,29 @@
+version: "3.5"
+
+services:
+    mqtt_broker:
+      image: eclipse-mosquitto
+    tsdb:
+      image: influxdb:alpine
+      ports:
+        - "8086:8086"
+      environment:
+        - INFLUXDB_HTTP_AUTH_ENABLED=true
+        - INFLUXDB_ADMIN_USER=devnet
+        - INFLUXDB_ADMIN_PASSWORD=create
+        - INFLUXDB_DB=embrace
+    tsdb_graphs:
+      image: chronograf:alpine
+    graphdb:
+      image: arangodb/arangodb
+    api:
+      image: embrace/api
+    simulator:
+      image: embrace/simulator
+      stdin_open: true
+      tty: true
+      ports:
+        - "9091:9091"
+        - "5000:5000"
+      depends_on:
+        - influxdb
