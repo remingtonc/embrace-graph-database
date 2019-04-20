@@ -14,16 +14,24 @@ services:
         - INFLUXDB_DB=embrace
     tsdb_graphs:
       image: chronograf:alpine
+      depends_on:
+        - tsdb
     graphdb:
       image: arangodb/arangodb
-    api:
-      image: embrace/api
-    simulator:
-      image: embrace/simulator
-      stdin_open: true
-      tty: true
-      ports:
-        - "9091:9091"
-        - "5000:5000"
+    web:
+      build: ./web
+      image: embrace/web
       depends_on:
-        - influxdb
+        - sync
+    sync:
+      build: ./sync
+      image: embrace/sync
+      depends_on:
+        - mqtt_broker
+        - tsdb
+        - graphdb
+    simulator:
+      build: ./simulator
+      image: embrace/simulator
+      depends_on:
+        - sync
