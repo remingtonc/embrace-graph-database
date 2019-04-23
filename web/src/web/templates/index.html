@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>Embrace the Graph Database</title>
+        <script src="{{ url_for('static', path='/js/ElGrapho.min.js') }}"></script>
+        <script>
+            let graph = null;
+            fetch("{{ url_for('topology') }}").then(response => response.json())
+            .catch(error => console.error("Error:", error))
+            .then(function(response) {
+                graph = new ElGrapho({
+                    container: document.getElementById('graph'),
+                    model: ElGrapho.layouts.ForceDirected(response),
+                    width: 500,
+                    height: 500
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <h1>Embrace the Graph Database</h1>
+        <div id="graph"></div>
+    </body>
+</html>

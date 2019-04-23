@@ -1,0 +1,10 @@
+apiVersion: 1
+datasources:
+- name: InfluxDB
+  type: influxdb
+  access: proxy
+  url: http://tsdb:8086
+  user: devnet
+  password: create
+  database: embrace
+  isDefault: true

@@ -7,11 +7,11 @@ from .network import Network
 
 class Simulator:
 
-    def __init__(self, mqtt_broker_address, length=1000, width=1000, time_scale=1, max_nodes=30):
-        self.length = length
-        self.width = width
+    def __init__(self, mqtt_broker_address, latitude_range=(37.413, 37.417), longitude_range=(-122.080, -122.068), time_scale=1, num_nodes=10):
+        self.latitude_range = latitude_range
+        self.longitude_range = longitude_range
         self.time_scale = time_scale
-        self.max_nodes = max_nodes
+        self.num_nodes = num_nodes
         self.mqtt_broker_address = mqtt_broker_address
         self.nodes = []
         self.network = None
@@ -34,9 +34,9 @@ class Simulator:
             node.stop()
     
     def setup_nodes(self):
-        for node_num in range(self.max_nodes):
-            node_latitude = random.randint(0, self.length)
-            node_longitude = random.randint(0, self.width)
+        for node_num in range(self.num_nodes):
+            node_latitude = random.uniform(*self.latitude_range)
+            node_longitude = random.uniform(*self.longitude_range)
             node_id = 'node-{node_num}'.format(node_num=node_num)
             self.nodes.append(
                 Node(
@@ -53,3 +53,4 @@ class Simulator:
         self.network = Network(self.mqtt_broker_address)
         for node in self.nodes:
             self.network.add_node(node)
+        self.network.send_topology()

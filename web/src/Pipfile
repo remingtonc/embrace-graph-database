@@ -8,6 +8,9 @@ name = "pypi"
 [packages]
 uvicorn = "*"
 starlette = "*"
+aiofiles = "*"
+python-arango = "*"
+jinja2 = ">=2.10.1"
 
 [requires]
 python_version = "3.6"

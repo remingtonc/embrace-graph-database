@@ -1,28 +1,59 @@
 version: "3.5"
 
+networks:
+  iot:
+  cloud:
+  api:
+
 services:
     mqtt_broker:
       image: eclipse-mosquitto
+      networks:
+        - iot
+        - cloud
     tsdb:
       image: influxdb:alpine
-      ports:
-        - "8086:8086"
       environment:
         - INFLUXDB_HTTP_AUTH_ENABLED=true
         - INFLUXDB_ADMIN_USER=devnet
         - INFLUXDB_ADMIN_PASSWORD=create
         - INFLUXDB_DB=embrace
-    tsdb_graphs:
-      image: chronograf:alpine
+      networks:
+        - cloud
+    tsdb_viz:
+      image: grafana/grafana
+      ports:
+        - "3000:3000"
+      environment:
+        - GF_INSTALL_PLUGINS=grafana-worldmap-panel
+      volumes:
+        - "./grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro"
       depends_on:
         - tsdb
+      networks:
+        - cloud
     graphdb:
       image: arangodb/arangodb
+      environment:
+        - ARANGO_ROOT_PASSWORD=devnet
+      ports:
+        - "8529:8529"
+      networks:
+        - cloud
     web:
       build: ./web
       image: embrace/web
+      ports:
+        - "8000:80"
+      environment:
+        - ARANGODB_HOST=graphdb
+        - ARANGODB_USERNAME=root
+        - ARANGODB_PASSWORD=devnet
       depends_on:
         - sync
+      networks:
+        - cloud
+        - api
     sync:
       build: ./sync
       image: embrace/sync
@@ -30,8 +61,13 @@ services:
         - mqtt_broker
         - tsdb
         - graphdb
+      networks:
+        - iot
+        - cloud
     simulator:
       build: ./simulator
       image: embrace/simulator
       depends_on:
         - sync
+      networks:
+        - iot

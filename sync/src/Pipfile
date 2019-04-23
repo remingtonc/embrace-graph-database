@@ -8,7 +8,8 @@ name = "pypi"
 [packages]
 paho-mqtt = "*"
 influxdb = "*"
-arango-orm = "*"
+python-arango = "*"
+geohash2 = "*"
 
 [requires]
 python_version = "3.6"

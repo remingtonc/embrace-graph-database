@@ -54,8 +54,8 @@ class Node(threading.Thread):
     
     def get_instantaneous_sensor_data(self):
         self.sensors['battery'] -= 0.1
-        self.sensors['temperature'] += random.random() * random.randrange(-1, 1)
-        self.sensors['air_quality'] += random.random() * random.randrange(-1, 1)
+        self.sensors['temperature'] += random.random() * random.randrange(-1, 2)
+        self.sensors['air_quality'] += random.random() * random.randrange(-1, 2)
         return self.sensors
     
     def get_fixed_sensor_data(self):
@@ -66,7 +66,11 @@ class Node(threading.Thread):
         }
 
     def get_sensor_data(self):
-        return {**self.get_fixed_sensor_data(), **self.get_instantaneous_sensor_data()}
+        return {
+            'time': time.time(),
+            **self.get_fixed_sensor_data(),
+            **self.get_instantaneous_sensor_data()
+        }
 
     def set_interface(self, interface):
         self.interface = interface
