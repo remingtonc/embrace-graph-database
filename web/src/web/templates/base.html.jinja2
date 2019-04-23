@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>{% block title %}Embrace the Graph Database{% endblock %}</title>
+        <link href="{{ url_for('static', path='cisco-ui/css/cui-styleguide.min.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{ url_for('static', path='css/embrace.css') }}" rel="stylesheet" type="text/css">
+        <link rel="icon" type="image/x-icon" href="https://www.cisco.com/favicon.ico">
+        {% block head_includes %}{% endblock %}
+    </head>
+    <body class="cui">
+        <div class="content-fluid">
+            <div class="sidebar sidebar--vibblue" >
+                <div class="sidebar__header">
+                    <div class="sidebar__header-title">{% block page_header %}DevNet Create 2019{% endblock %}</div>
+                </div>
+                <ul>
+                    <li class="sidebar__item">
+                        <a href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="sidebar__item">
+                        <a href="{{ url_for('topology_el_grapho') }}">El Grapho</a>
+                    </li>
+                </ul>
+            </div>
+            <main>
+                <header class="header header--compressed">
+                    <div class="header-bar container">
+                        <div class="header-bar__main">
+                            <div class="header-breadcrumbs">
+                            </div>
+                            <div class="header-heading">
+                                <h1 class="page-title">{% block page_title %}Embrace the Graph Database{% endblock %}</h1>
+                            </div>
+                        </div>
+                        <div class="header-toolbar">
+                            <div class="alert" style="margin: 0;">
+                                <div class="alert__message"><a target="_blank" href="https://github.cisco.com/remingtonc/embrace-graph-database/issues">Report Bugs</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content">
+                    <div class="container">
+                        <div class="section">
+                            {% block content %}Not yet implemented!{% endblock %}
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        {% block end_body_content %}{% endblock %}
+    </body>
+</html>

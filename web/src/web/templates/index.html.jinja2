@@ -1,0 +1,57 @@
+{% extends 'base.html.jinja2' %}
+
+{% block page_header %}DevNet Create 2019{% endblock %}
+
+{% block head_includes %}
+<script>
+    window.addEventListener("load", function() {
+        var collections = ["Nodes", "Connections"];
+        fetch("{{ url_for('api_collection_counts') }}", {
+            body: JSON.stringify(collections),
+            credentials: "same-origin",
+            headers: {
+                "content-type": "application/json"
+            },
+            method: "POST",
+            mode: "cors",
+            redirect: "follow",
+            referrer: "no-referrer"
+        }).then(response => response.json())
+        .catch(error => console.error("Error:", error))
+        .then(function(response) {
+            for (var collectionName in response) {
+                var collectionSize = response[collectionName];
+                document.getElementById(collectionName).innerHTML = "<h1>" + collectionSize + "</h1>";
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="hero hero--loose hero--vibblue">
+            <div class="container">
+                <div class="hero__content">
+                    <h3>Graph Databases are Cool</h3>
+                    <p>Yes.</p>
+                </div>
+            </div>
+            <div class="hero__marquee hero--background-3 hero--filter-blue"></div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="subheader">Nodes</div>
+        <figure class="figure figure--loose">
+            <figcaption id="Nodes"><div class="loading-dots loading-dots--info"><span></span><span></span><span></span></div></figcaption>
+        </figure>
+    </div>
+    <div class="col-md-2">
+        <div class="subheader">Connections</div>
+        <figure class="figure figure--loose">
+            <figcaption id="Connections"><div class="loading-dots loading-dots--info"><span></span><span></span><span></span></div></figcaption>
+        </figure>
+    </div>
+</div>
+{% endblock %}

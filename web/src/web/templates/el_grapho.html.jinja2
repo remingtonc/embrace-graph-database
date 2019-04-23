@@ -1,0 +1,37 @@
+{% extends 'base.html.jinja2' %}
+
+{% block page_header %}DevNet Create 2019{% endblock %}
+
+{% block head_includes %}
+<script src="{{ url_for('static', path='/js/ElGrapho.min.js') }}"></script>
+<script>
+let graph = null;
+window.addEventListener("load", function() {
+    let containerElement = document.getElementById('graph');
+    fetch("{{ url_for('api_topology_el_grapho') }}").then(response => response.json())
+    .catch(error => console.error("Error:", error))
+    .then(function(response) {
+        graph = new ElGrapho({
+            container: containerElement,
+            model: ElGrapho.layouts.ForceDirected(response),
+            width: containerElement.clientWidth
+        });
+    });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="subheader">El Grapho</div>
+        <figure class="figure figure--horizontal">
+            <figcaption>El Grapho is a very useful thing.</figcaption>
+        </figure>
+    </div>
+</div>
+<div class="row">
+    <div id="graph" class="col-md-12">
+    </div>
+</div>
+{% endblock %}

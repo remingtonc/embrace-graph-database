@@ -39,7 +39,7 @@ def mqtt_on_connect(client, userdata, flags, rc):
 
 def mqtt_on_message_sensor(client, userdata, msg):
     sensor_data = json.loads(msg.payload)
-    required_fields = {'battery', 'temperature', 'air_quality'}
+    required_fields = {'battery', 'temperature', 'air_quality', 'radio_power'}
     required_tags = {'id'}
     geohash = geohash2.encode(sensor_data['latitude'], sensor_data['longitude'])
     influx_datapoints = []

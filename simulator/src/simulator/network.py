@@ -2,6 +2,8 @@ import operator
 import math
 import json
 import logging
+import random
+from geopy.distance import distance
 from .interface import Interface
 from paho.mqtt.client import Client
 
@@ -16,7 +18,7 @@ class Network:
         self.mqtt_client.connect(mqtt_broker_address, mqtt_port, mqtt_timeout)
 
     def add_node(self, node):
-        interface = Interface(self)
+        interface = Interface(self, random.randint(1, 5))
         node.set_interface(interface)
         self.nodes.append(node)
         self.node_graph = self.__compute_node_graph()
@@ -58,9 +60,10 @@ class Network:
         return node_graph
 
     def __compute_node_distance(self, first_node, second_node):
-        d_y = abs(first_node.latitude - second_node.latitude)
-        d_x = abs(first_node.longitude - second_node.longitude)
-        return math.sqrt(d_x**2 + d_y**2)
+        return distance(
+            (first_node.latitude, first_node.longitude),
+            (second_node.latitude, second_node.longitude)
+        ).miles
 
     def __compute_adjacent_nodes(self, node):
         adjacent_nodes = []

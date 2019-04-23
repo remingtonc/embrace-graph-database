@@ -1,7 +1,7 @@
 
 class Interface:
 
-    def __init__(self, network, radio_power=30):
+    def __init__(self, network, radio_power=5):
         self.radio_power = radio_power
         self.network = network
     

@@ -7,7 +7,7 @@ from .network import Network
 
 class Simulator:
 
-    def __init__(self, mqtt_broker_address, latitude_range=(37.413, 37.417), longitude_range=(-122.080, -122.068), time_scale=1, num_nodes=10):
+    def __init__(self, mqtt_broker_address, latitude_range=(37.4, 37.5), longitude_range=(-122.1, -122), time_scale=1, num_nodes=10):
         self.latitude_range = latitude_range
         self.longitude_range = longitude_range
         self.time_scale = time_scale

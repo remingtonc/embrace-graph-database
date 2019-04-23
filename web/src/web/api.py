@@ -1,3 +1,4 @@
+from collections import ChainMap
 from starlette.responses import JSONResponse
 from arango import ArangoClient
 from . import app, settings
@@ -14,8 +15,28 @@ def startup():
         password=str(settings.ARANGODB_PASSWORD)
     )
 
+@app.route('/api/v1/collection_counts', methods=['POST'])
+async def api_collection_counts(request):
+    requested_collections = await request.json()
+    collection_count_query = """
+    LET given_collections = @given_collections
+    FOR collection IN given_collections
+        RETURN {
+            [ collection ]: COLLECTION_COUNT(collection)
+        }
+    """
+    bind_vars = {'given_collections': requested_collections}
+    collection_counts = arangodb_client.aql.execute(collection_count_query, bind_vars=bind_vars)
+    return JSONResponse(
+        {
+            collection: count for collection_count in collection_counts
+            for collection, count in collection_count.items()
+        }
+    )
+
+
 @app.route('/api/v1/topology/el_grapho')
-async def topology(request):
+async def api_topology_el_grapho(request):
     node_aql = """
     FOR node IN Nodes
         RETURN node._id

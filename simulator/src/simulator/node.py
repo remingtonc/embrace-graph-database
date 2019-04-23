@@ -53,16 +53,19 @@ class Node(threading.Thread):
         self.send_data(data)
     
     def get_instantaneous_sensor_data(self):
-        self.sensors['battery'] -= 0.1
+        self.sensors['battery'] -= 0.1 * random.randrange(0, 2)
         self.sensors['temperature'] += random.random() * random.randrange(-1, 2)
         self.sensors['air_quality'] += random.random() * random.randrange(-1, 2)
+        if self.sensors['air_quality'] <= 0:
+            self.sensors['air_quality'] = 0
         return self.sensors
     
     def get_fixed_sensor_data(self):
         return {
             'latitude': self.latitude,
             'longitude': self.longitude,
-            'id': self.node_id
+            'id': self.node_id,
+            'radio_power': self.interface.radio_power
         }
 
     def get_sensor_data(self):

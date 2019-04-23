@@ -7,6 +7,7 @@ name = "pypi"
 
 [packages]
 paho-mqtt = "*"
+geopy = "*"
 
 [requires]
 python_version = "3.6"
