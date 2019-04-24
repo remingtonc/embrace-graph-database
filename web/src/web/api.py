@@ -127,7 +127,7 @@ async def api_topology_el_grapho(request):
     return JSONResponse(
         {
             'nodes': [
-                {'group': node._key} for node in nodes
+                {'group': index} for index, node in enumerate(nodes)
             ],
             'edges': [
                 {
