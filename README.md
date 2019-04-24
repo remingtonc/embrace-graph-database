@@ -4,7 +4,7 @@
 
 Learn about graph databases like ArangoDB and the powerful capabilities they provide. Apply them with IoT concepts and create useful visualizations and powerful queries to accomplish what is typically complex or computationally expensive with other domains of databases.
 
-**Note**: This repository should not be taken as best practice example for code development or structure, but as an example PoC.
+**Note**: This repository should not be taken as best practice example for code development or structure, but as an example PoC. This is not an official product of Cisco.
 
 * [Objectives](#objectives)
 * [Prerequisites](#prerequisites)
@@ -43,9 +43,9 @@ In order to complete this lab you will need a development workstation with Docke
 
 ### Get the code!
 * If you have `git` installed...  
-`git clone https://github.com/remingtonc/embrace-graph-database`
-* Otherwise, [download](https://github.com/remingtonc/embrace-graph-database/archive/master.zip) from your web browser or other tool.  
-https://github.com/remingtonc/embrace-graph-database/archive/master.zip
+`git clone https://github.com/cisco-ie/embrace-graph-database`
+* Otherwise, [download](https://github.com/cisco-ie/embrace-graph-database/archive/master.zip) from your web browser or other tool.  
+https://github.com/cisco-ie/embrace-graph-database/archive/master.zip
 
 You're ready to workshop!
 
@@ -59,7 +59,7 @@ The following expects you to utilize a terminal of some kind, also known as comm
 
 ```bash
 # Get the code!
-git clone https://github.com/remingtonc/embrace-graph-database
+git clone https://github.com/cisco-ie/embrace-graph-database
 cd embrace-graph-database
 # If you have never run Docker Compose before...
 ./setup.sh # MacOS or Linux
