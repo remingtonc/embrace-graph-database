@@ -1,0 +1,143 @@
+{% extends 'base.html.jinja2' %}
+
+{% block page_header %}Shortest Path{% endblock %}
+
+{% block head_includes %}
+<script>
+window.addEventListener("load", function() {
+    fetch("{{ url_for('api_nodes') }}").then(response => response.json())
+    .catch(error => console.error("Error", error))
+    .then(function(response) {
+        for (let node of response) {
+            let nodeElement = document.createElement("a");
+            nodeElement.appendChild(document.createTextNode(node._id));
+            let fromNodeElement = nodeElement.cloneNode(true);
+            fromNodeElement.addEventListener("click", function(event) {
+                document.getElementById("fromNode").innerHTML = event.target.innerHTML;
+            });
+            document.getElementById("fromNodeSelection").appendChild(fromNodeElement);
+            let toNodeElement = nodeElement.cloneNode(true);
+            toNodeElement.addEventListener("click", function(event) {
+                document.getElementById("toNode").innerHTML = event.target.innerHTML;
+            });
+            document.getElementById("toNodeSelection").appendChild(toNodeElement);
+        }
+        setupDropdown("fromNode");
+        setupDropdown("toNode");
+    });
+    fetch("{{ url_for('api_weights') }}").then(response => response.json())
+    .catch(error => console.error("Error", error))
+    .then(function(response) {
+        for (let weight of response) {
+            let weightElement = document.createElement("a");
+            weightElement.appendChild(document.createTextNode(weight));
+            weightElement.addEventListener("click", function(event) {
+                document.getElementById("weightAttribute").innerHTML = event.target.innerHTML;
+            });
+            document.getElementById("weightAttributeSelection").appendChild(weightElement);
+        }
+        setupDropdown("weightAttribute");
+    });
+    document.getElementById("shortestPath").addEventListener("click", function(event) {
+        event.stopPropagation();
+        let url = new URL("{{ url_for('api_topology_shortest_path') }}");
+        let params = {
+            fromNode: document.getElementById("fromNode").innerHTML,
+            toNode: document.getElementById("toNode").innerHTML,
+            weightAttribute: document.getElementById("weightAttribute").innerHTML
+        }
+        Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
+        fetch(url).then(response => response.json())
+        .catch(error => console.error("Error", error))
+        .then(function(response) {
+            let pathVisualization = document.getElementById("pathVisualization");
+            while (pathVisualization.firstChild) {
+                pathVisualization.removeChild(pathVisualization.firstChild);
+            }
+            for (let item of response) {
+                let node = item["node"];
+                let connection = item["connection"];
+                let timelineItem = document.createElement("div");
+                timelineItem.classList.add("timeline__item");
+                let timelineIcon = document.createElement("div");
+                timelineIcon.classList.add("timeline__icon");
+                timelineItem.appendChild(timelineIcon);
+                let timelineTime = document.createElement("div");
+                timelineTime.classList.add("timeline__time");
+                if (connection != null) {
+                    timelineTime.appendChild(document.createTextNode(connection["distance"].toFixed(4)))
+                }
+                timelineItem.appendChild(timelineTime);
+                let timelineContent = document.createElement("div");
+                timelineContent.classList.add("timeline__content");
+                let timelinePanel = document.createElement("div");
+                timelinePanel.classList.add("panel");
+                timelinePanel.classList.add("panel--bordered");
+                nodeId = document.createElement("div");
+                nodeId.classList.add("text-bold");
+                nodeId.appendChild(document.createTextNode(node["_key"]));
+                timelinePanel.appendChild(nodeId);
+                timelineContent.appendChild(timelinePanel);
+                timelineItem.appendChild(timelineContent);
+                pathVisualization.appendChild(timelineItem);
+            }
+        });
+    });
+});
+
+function setupDropdown(dropdownId) {
+    let btnNode = document.getElementById(dropdownId);
+    let selection = document.getElementById(dropdownId + "Dropdown");
+    btnNode.onclick = function() {
+        selection.classList.toggle("active");
+    }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="subheader">From Node</div>
+        <div id="fromNodeDropdown" class="dropdown">
+            <button id="fromNode" class="btn btn--wide">Not Selected</button>
+            <div id="fromNodeSelection" class="dropdown__menu">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="subheader">To Node</div>
+        <div id="toNodeDropdown" class="dropdown">
+            <button id="toNode" class="btn btn--wide">Not Selected</button>
+            <div id="toNodeSelection" class="dropdown__menu">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="subheader">Weight Attribute</div>
+        <div id="weightAttributeDropdown" class="dropdown">
+            <button id="weightAttribute" class="btn btn--wide">Not Selected</button>
+            <div id="weightAttributeSelection" class="dropdown__menu">
+            </div>
+        </div>
+    </div>
+</div>
+<hr/>
+<div class="row">
+    <div class="col-md-3">
+        <div class="subheader">Calculate</div>
+        <figure class="figure">
+            <figcaption>This will calculate the shortest path from one node to another based upon a specific weight!</figcaption>
+            <br>
+            <button id="shortestPath" class="btn btn--primary btn--wide">Shortest Path</button>
+        </figure>
+    </div>
+    <div class="col-md-9">
+        <div class="subheader">Path</div>
+        <div class="timeline timeline--block">
+            <div id="pathVisualization" class="timeline__list">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,10 +1,3 @@
-span.icon-medium {
-    font-family: cui-font;
-    font-size: inherit;
-    font-style: normal;
-    font-weight: 400;
-    text-transform: none;
-    text-rendering: optimizeLegibility;
-    text-indent: .5px;
-    -moz-osx-font-smoothing: grayscale;
+.cui .dropdown > .btn::after, .cui .dropdown > a::after {
+    content: "";
 }

@@ -34,6 +34,41 @@ async def api_collection_counts(request):
         }
     )
 
+@app.route('/api/v1/nodes')
+async def api_nodes(request):
+    nodes_aql = """
+    FOR node IN Nodes
+        RETURN node
+    """
+    nodes = arangodb_client.aql.execute(nodes_aql)
+    return JSONResponse([node for node in nodes])
+
+@app.route('/api/v1/weights')
+async def api_weights(request):
+    return JSONResponse(["distance"])
+
+@app.route('/api/v1/topology/shortest_path')
+async def api_topology_shortest_path(request):
+    shortest_path_aql = """
+    FOR vertex, edge
+        IN ANY SHORTEST_PATH
+        @from_node TO @to_node
+        GRAPH "Topology"
+        OPTIONS {
+            weightAttribute: @weight_attribute
+        }
+        RETURN {
+            "node": vertex,
+            "connection": edge
+        }
+    """
+    bind_vars = {
+        'from_node': request.query_params['fromNode'],
+        'to_node': request.query_params['toNode'],
+        'weight_attribute': request.query_params['weightAttribute']
+    }
+    shortest_path = arangodb_client.aql.execute(shortest_path_aql, bind_vars=bind_vars)
+    return JSONResponse([element for element in shortest_path])
 
 @app.route('/api/v1/topology/el_grapho')
 async def api_topology_el_grapho(request):
