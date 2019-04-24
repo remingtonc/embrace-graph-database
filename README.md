@@ -4,6 +4,8 @@
 
 Learn about graph databases like ArangoDB and the powerful capabilities they provide. Apply them with IoT concepts and create useful visualizations and powerful queries to accomplish what is typically complex or computationally expensive with other domains of databases.
 
+**Note**: This repository should not be taken as best practice example for code development or structure, but as an example PoC.
+
 * [Objectives](#objectives)
 * [Prerequisites](#prerequisites)
   * [Install Docker CE](#install-docker-ce)
@@ -59,7 +61,7 @@ The following expects you to utilize a terminal of some kind, also known as comm
 # Get the code!
 git clone https://github.com/remingtonc/embrace-graph-database
 cd embrace-graph-database
-# If you have never run Docker Swarm before...
+# If you have never run Docker Compose before...
 ./setup.sh # MacOS or Linux
 .\setup.bat # Windows
 # Start the stack!
