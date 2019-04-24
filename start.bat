@@ -1,4 +1,4 @@
 @echo off
 echo "Deploying embrace-graph-database!"
-docker-compose up --build -d
+docker-compose up -d
 echo "Done!"

@@ -44,7 +44,7 @@ services:
         - cloud
     web:
       build: ./web
-      image: embrace/web
+      image: ciscoie/embrace-web
       ports:
         - "8000:80"
       environment:
@@ -58,7 +58,7 @@ services:
         - api
     sync:
       build: ./sync
-      image: embrace/sync
+      image: ciscoie/embrace-sync
       depends_on:
         - mqtt_broker
         - tsdb
@@ -68,7 +68,7 @@ services:
         - cloud
     simulator:
       build: ./simulator
-      image: embrace/simulator
+      image: ciscoie/embrace-simulator
       depends_on:
         - sync
       networks:

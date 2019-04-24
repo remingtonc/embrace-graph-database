@@ -6,4 +6,5 @@ IF %ERRORLEVEL% EQU 0 (
     echo "Please install Docker before running!"
     EXIT 1
 )
+docker-compose pull
 echo "Done!"

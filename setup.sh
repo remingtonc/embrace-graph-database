@@ -6,4 +6,5 @@ else
     echo "Please install Docker before running!"
     exit 1
 fi
+docker-compose pull
 echo "Done!"
