@@ -1,4 +1,4 @@
-from collections import ChainMap
+import time
 from starlette.responses import JSONResponse
 from arango import ArangoClient
 from . import app, settings
@@ -135,5 +135,46 @@ async def api_topology_el_grapho(request):
                     'to': node_indices[edge[1]]
                 } for edge in edges
             ]
+        }
+    )
+
+@app.route('/api/v1/topology/closeness')
+async def api_topology_closeness(request):
+    db_pregel = arangodb_client.pregel
+    job_id = db_pregel.create_job(
+        graph='Topology',
+        algorithm='effectivecloseness',
+        result_field='closeness'
+    )
+    while db_pregel.job(job_id)['state'] != 'done':
+        time.sleep(0.5)
+    node_aql = """
+    FOR node IN Nodes
+        RETURN {
+            "id": node._id,
+            "label": node._key,
+            "value": node.closeness
+        }
+    """
+    nodes = [
+        node for node
+        in arangodb_client.aql.execute(node_aql)
+    ]
+    edge_aql = """
+    FOR connection IN Connections
+        RETURN {
+            "source": connection._from,
+            "target": connection._to,
+            "value": connection.distance
+        }
+    """
+    edges = [
+        edge for edge
+        in arangodb_client.aql.execute(edge_aql)
+    ]
+    return JSONResponse(
+        {
+            'nodes': nodes,
+            'links': edges
         }
     )

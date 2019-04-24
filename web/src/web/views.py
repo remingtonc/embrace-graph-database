@@ -22,3 +22,7 @@ async def topology_el_grapho(request):
 @app.route('/shortest_path')
 async def shortest_path(request):
     return templates.TemplateResponse('shortest_path.html.jinja2', {'request': request})
+
+@app.route('/topology/closeness')
+async def topology_closeness(request):
+    return templates.TemplateResponse('closeness.html.jinja2', {'request': request})
