@@ -70,6 +70,39 @@ async def api_topology_shortest_path(request):
     shortest_path = arangodb_client.aql.execute(shortest_path_aql, bind_vars=bind_vars)
     return JSONResponse([element for element in shortest_path])
 
+@app.route('/api/v1/topology/d3')
+async def api_topology_d3(request):
+    node_aql = """
+    FOR node IN Nodes
+        RETURN {
+            "id": node._id,
+            "label": node._key,
+            "value": node.temperature
+        }
+    """
+    nodes = [
+        node for node
+        in arangodb_client.aql.execute(node_aql)
+    ]
+    edge_aql = """
+    FOR connection IN Connections
+        RETURN {
+            "source": connection._from,
+            "target": connection._to,
+            "value": connection.distance
+        }
+    """
+    edges = [
+        edge for edge
+        in arangodb_client.aql.execute(edge_aql)
+    ]
+    return JSONResponse(
+        {
+            'nodes': nodes,
+            'links': edges
+        }
+    )
+
 @app.route('/api/v1/topology/el_grapho')
 async def api_topology_el_grapho(request):
     node_aql = """
@@ -94,7 +127,7 @@ async def api_topology_el_grapho(request):
     return JSONResponse(
         {
             'nodes': [
-                {'group': 0} for node in nodes
+                {'group': node._key} for node in nodes
             ],
             'edges': [
                 {

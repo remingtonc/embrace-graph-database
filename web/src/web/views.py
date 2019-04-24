@@ -11,6 +11,10 @@ templates = Jinja2Templates(directory='web/templates')
 async def index(request):
     return templates.TemplateResponse('index.html.jinja2', {'request': request})
 
+@app.route('/topology/d3')
+async def topology_d3(request):
+    return templates.TemplateResponse('d3.html.jinja2', {'request': request})
+
 @app.route('/topology/el_grapho')
 async def topology_el_grapho(request):
     return templates.TemplateResponse('el_grapho.html.jinja2', {'request': request})
