@@ -45,13 +45,22 @@ async def api_nodes(request):
 
 @app.route('/api/v1/weights')
 async def api_weights(request):
-    return JSONResponse(["distance"])
+    weight_query = """
+    FOR connection IN Connections
+        LIMIT 1
+        RETURN ATTRIBUTES(connection, true)
+    """
+    weights = [
+        weight for weight
+        in arangodb_client.aql.execute(weight_query)
+    ][0]
+    return JSONResponse(weights)
 
 @app.route('/api/v1/topology/shortest_path')
 async def api_topology_shortest_path(request):
     shortest_path_aql = """
-    FOR vertex, edge
-        IN ANY SHORTEST_PATH
+    FOR vertex, edge IN
+        OUTBOUND SHORTEST_PATH
         @from_node TO @to_node
         GRAPH "Topology"
         OPTIONS {

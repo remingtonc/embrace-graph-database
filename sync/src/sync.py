@@ -15,28 +15,6 @@ influxdb_client = None
 topology_graph = None
 topology_node_references = {}
 
-def await_netloc(host, port, interval=3):
-    """Await a certain URL to be open.
-    url expects a port parameter in url string.
-    Adapted from:
-    http://code.activestate.com/recipes/576655-wait-for-network-service-to-appear/
-    """
-    sock = socket.socket()
-    sock.settimeout(1)
-    connected = False
-    while not connected:
-        try:
-            sock.connect((host, port))
-        except Exception:
-            time.sleep(interval)
-        else:
-            sock.close()
-            connected = True
-
-def mqtt_on_connect(client, userdata, flags, rc):
-    logging.info('Connected with result code %d.', rc)
-    client.subscribe('embrace/#')
-
 def mqtt_on_message_sensor(client, userdata, msg):
     sensor_data = json.loads(msg.payload)
     required_fields = {'battery', 'temperature', 'air_quality', 'radio_power'}
@@ -72,23 +50,45 @@ def mqtt_on_message_topology(client, userdata, msg):
     global topology_node_references
     topology_data = json.loads(msg.payload)
     for connection in topology_data:
-        first_node = connection['first_node']
-        second_node = connection['second_node']
+        from_node = connection['from_node']
+        to_node = connection['to_node']
         edge = connection['edge']
-        if first_node not in topology_node_references.keys():
-            topology_node_references[first_node] = topology_graph.insert_vertex(
-                'Nodes', {'_key': first_node}
+        if from_node not in topology_node_references.keys():
+            topology_node_references[from_node] = topology_graph.insert_vertex(
+                'Nodes', {'_key': from_node}
             )
-        if second_node not in topology_node_references.keys():
-            topology_node_references[second_node] = topology_graph.insert_vertex(
-                'Nodes', {'_key': second_node}
+        if to_node not in topology_node_references.keys():
+            topology_node_references[to_node] = topology_graph.insert_vertex(
+                'Nodes', {'_key': to_node}
             )
         topology_graph.link(
             'Connections',
-            topology_node_references[first_node]['_id'],
-            topology_node_references[second_node]['_id'],
+            topology_node_references[from_node]['_id'],
+            topology_node_references[to_node]['_id'],
             data=edge
         )
+
+def await_netloc(host, port, interval=3):
+    """Await a certain URL to be open.
+    url expects a port parameter in url string.
+    Adapted from:
+    http://code.activestate.com/recipes/576655-wait-for-network-service-to-appear/
+    """
+    sock = socket.socket()
+    sock.settimeout(1)
+    connected = False
+    while not connected:
+        try:
+            sock.connect((host, port))
+        except Exception:
+            time.sleep(interval)
+        else:
+            sock.close()
+            connected = True
+
+def mqtt_on_connect(client, userdata, flags, rc):
+    logging.info('Connected with result code %d.', rc)
+    client.subscribe('embrace/#')
 
 def ensure_influxdb(host, port, username='devnet', password='create', database='embrace'):
     await_netloc(host, port)

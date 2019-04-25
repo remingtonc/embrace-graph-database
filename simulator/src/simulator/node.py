@@ -25,7 +25,31 @@ class Node(threading.Thread):
         return {
             'battery': 100,
             'temperature': random.randint(-50, 120),
-            'air_quality': random.randint(1, 100)
+            'air_quality': random.randint(1, 100),
+            'radio_power': 0
+        }
+
+    def get_instantaneous_sensor_data(self):
+        self.sensors['radio_power'] = self.interface.radio_power
+        self.sensors['battery'] -= 0.1 * random.randrange(0, 2)
+        self.sensors['temperature'] += random.random() * random.randrange(-1, 2)
+        self.sensors['air_quality'] += random.random() * random.randrange(-1, 2)
+        if self.sensors['air_quality'] <= 0:
+            self.sensors['air_quality'] = 0
+        return self.sensors
+
+    def get_fixed_sensor_data(self):
+        return {
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'id': self.node_id
+        }
+
+    def get_sensor_data(self):
+        return {
+            'time': time.time(),
+            **self.get_fixed_sensor_data(),
+            **self.get_instantaneous_sensor_data()
         }
 
     def stop(self):
@@ -51,29 +75,6 @@ class Node(threading.Thread):
         )
         data = self.get_sensor_data()
         self.send_data(data)
-    
-    def get_instantaneous_sensor_data(self):
-        self.sensors['battery'] -= 0.1 * random.randrange(0, 2)
-        self.sensors['temperature'] += random.random() * random.randrange(-1, 2)
-        self.sensors['air_quality'] += random.random() * random.randrange(-1, 2)
-        if self.sensors['air_quality'] <= 0:
-            self.sensors['air_quality'] = 0
-        return self.sensors
-    
-    def get_fixed_sensor_data(self):
-        return {
-            'latitude': self.latitude,
-            'longitude': self.longitude,
-            'id': self.node_id,
-            'radio_power': self.interface.radio_power
-        }
-
-    def get_sensor_data(self):
-        return {
-            'time': time.time(),
-            **self.get_fixed_sensor_data(),
-            **self.get_instantaneous_sensor_data()
-        }
 
     def set_interface(self, interface):
         self.interface = interface

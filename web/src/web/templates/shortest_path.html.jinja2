@@ -41,10 +41,13 @@ window.addEventListener("load", function() {
     document.getElementById("shortestPath").addEventListener("click", function(event) {
         event.stopPropagation();
         let url = new URL("{{ url_for('api_topology_shortest_path') }}");
+        let fromNode = document.getElementById("fromNode").innerHTML;
+        let toNode = document.getElementById("toNode").innerHTML;
+        let weightAttribute = document.getElementById("weightAttribute").innerHTML;
         let params = {
-            fromNode: document.getElementById("fromNode").innerHTML,
-            toNode: document.getElementById("toNode").innerHTML,
-            weightAttribute: document.getElementById("weightAttribute").innerHTML
+            fromNode: fromNode,
+            toNode: toNode,
+            weightAttribute: weightAttribute
         }
         Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
         fetch(url).then(response => response.json())
@@ -65,7 +68,7 @@ window.addEventListener("load", function() {
                 let timelineTime = document.createElement("div");
                 timelineTime.classList.add("timeline__time");
                 if (connection != null) {
-                    timelineTime.appendChild(document.createTextNode(connection["distance"].toFixed(4)))
+                    timelineTime.appendChild(document.createTextNode(connection[weightAttribute].toFixed(4)))
                 }
                 timelineItem.appendChild(timelineTime);
                 let timelineContent = document.createElement("div");
