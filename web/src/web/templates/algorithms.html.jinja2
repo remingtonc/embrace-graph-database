@@ -5,8 +5,28 @@
 {% block head_includes %}
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script>
+let topologyApi = "{{ url_for('api_topology_algorithms') }}";
+let availableAlgorithms = ["pagerank", "effectivecloseness"];
+document.addEventListener("DOMContentLoaded", function () {
+    for (let algorithm of availableAlgorithms) {
+        let algorithmElement = document.createElement("a");
+        algorithmElement.appendChild(document.createTextNode(algorithm));
+        algorithmElement.addEventListener("click", function(event) {
+            let selectedAlgorithm = event.target.innerHTML;
+            document.getElementById("algorithm").innerHTML = selectedAlgorithm;
+            d3.selectAll("svg > *").remove();
+            d3.json(topologyApi + "?algorithm=" + selectedAlgorithm)
+            .then(visualizeTopology, function (e) {
+                console.error('Could not obtain data!');
+            });
+        });
+        document.getElementById("algorithmSelection").appendChild(algorithmElement);
+    }
+    setupDropdown("algorithm");
+});
+</script>
+<script>
 // Derived from https://beta.observablehq.com/@mbostock/d3-force-directed-graph
-let topologyApi = "{{ url_for('api_topology_closeness') }}";
 let visualizationSvgId = 'topology';
 let visualizationContainerId = 'topologyContainer';
 let visualizationWidth = 0;
@@ -18,14 +38,10 @@ let linkPopulationValueMin = 0;
 let nodePopulationValueMax = 0;
 let nodePopulationValueMin = 0;
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener("DOMContentLoaded", function () {
     let destContainer = document.getElementById(visualizationContainerId);
     visualizationWidth = destContainer.offsetWidth;
     visualizationHeight = destContainer.offsetHeight;
-    d3.json(topologyApi)
-    .then(visualizeTopology, function (e) {
-        console.error('Could not obtain data!');
-    });
 });
 
 function scaleValue(value, populationValueMin, populationValueMax, scaleMin = 0, scaleMax = 1) {
@@ -114,10 +130,18 @@ function visualizeTopology (topologyData) {
 
 {% block content %}
 <div class="row">
-    <div class="col-md-12">
-        <div class="subheader">Effective Closeness</div>
+    <div class="col-md-2">
+        <div class="subheader">Algorithm</div>
+        <div id="algorithmDropdown" class="dropdown">
+            <button id="algorithm" class="btn btn--small btn--primary">Not Selected</button>
+            <div id="algorithmSelection" class="dropdown__menu">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <div class="subheader">Algorithm</div>
         <figure class="figure figure--horizontal">
-            <figcaption>This graph demonstrates <a href="https://docs.arangodb.com/devel/Manual/Graphs/Pregel/#effective-closeness">effective closeness</a>. The color of the node indicates its value based on the scale to the right. The nodes which are rightmost in color are more well connected and important to the graph of entities.</figcaption>
+            <figcaption>This graph demonstrates <a href="https://docs.arangodb.com/devel/Manual/Graphs/Pregel/#available-algorithms">algorithms</a> with ArangoDB's pregel implementation. The color of the node indicates its value based on the scale to the right. The nodes which are rightmost in color have a higher algorithm result value.</figcaption>
             <img src="https://raw.githubusercontent.com/d3/d3-scale-chromatic/master/img/cool.png">
         </figure>
     </div>

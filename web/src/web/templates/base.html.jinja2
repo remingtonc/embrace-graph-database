@@ -6,6 +6,7 @@
         <link href="{{ url_for('static', path='cisco-ui/css/cui-styleguide.min.css') }}" rel="stylesheet" type="text/css">
         <link href="{{ url_for('static', path='css/embrace.css') }}" rel="stylesheet" type="text/css">
         <link rel="icon" type="image/x-icon" href="https://www.cisco.com/favicon.ico">
+        <script src="{{ url_for('static', path='js/embrace.js') }}"></script>
         {% block head_includes %}{% endblock %}
     </head>
     <body class="cui">
@@ -28,7 +29,7 @@
                         <a href="{{ url_for('shortest_path') }}">Shortest Path</a>
                     </li>
                     <li class="sidebar__item">
-                        <a href="{{ url_for('topology_closeness') }}">Closeness Graph</a>
+                        <a href="{{ url_for('topology_algorithms') }}">Graph Algorithms</a>
                     </li>
                 </ul>
             </div>
